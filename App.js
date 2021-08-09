@@ -1,21 +1,42 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+import HomeScreen from "./screens/HomeScreen";
+import AppNavigator from './navigator/AppNavigator';
+import ApolloClient from "apollo-boost"
+import { ApolloProvider } from "react-apollo";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const client = new ApolloClient({
+  uri: "https://graphql.contentful.com/content/v1/spaces/9vbfges3gy9u",
+  credentials: "same-origin",
+  headers: { Authorization: `Bearer KH-pt-ZPMMp4S5LMpQ9mE_Ed-SxqBFax-eSSsXfZlkQ` }
+});
+
+const initialState = {
+  action: ""
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case "OPEN_MENU":
+      return { action: "openMenu" };
+    case "CLOSE_MENU":
+      return { action: "closeMenu" };
+    default:
+      return state;
+  }
+}
+
+const store = createStore(reducer);
+
+const App = () => {
+  return (
+    <ApolloProvider client={client} >
+      <Provider store={store}>
+        <AppNavigator />
+      </Provider>
+    </ApolloProvider>
+  )
+}
+
+export default App
